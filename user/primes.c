@@ -19,10 +19,13 @@ int read_int(int fd) {
   return i;
 }
 
-int write_int(int fd, int i) {
+void write_int(int fd, int i) {
   char buf[sizeof(int)];
   memcpy(buf, &i, sizeof(int));
-  return write(fd, buf, sizeof(int));
+  int n = write(fd, buf, sizeof(int));
+  if (n != sizeof(int)) {
+    printf("write_int: expected 4 bytes, got %d", n);
+  }
 }
 
 /**
@@ -41,7 +44,12 @@ int primes(int fd) {
       if (pid == 0) {
         pipe(p);
         pid = fork();
+        if (pid == -1) {
+          printf("failed to fork");
+          exit(1);
+        }
         if (pid == 0) {
+          close(fd);
           close(p[1]);
           primes(p[0]);
           close(p[0]);
