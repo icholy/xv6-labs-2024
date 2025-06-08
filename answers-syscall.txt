@@ -5,5 +5,5 @@ user mode
 lw	a3,0(zero)
 a3
 loading unmapped address (0)
-scause=0xd (15) = Store/AMO page fault
+scause=0xd (13) = Loag page fault
 initcode
