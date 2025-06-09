@@ -63,6 +63,17 @@ strchr(const char *s, char c)
   return 0;
 }
 
+char *
+strstr(const char *s, const char *q) 
+{
+  for (; *s; s++) {
+    if (strcmp(s, q)) {
+      return (char*)s;
+    }
+  }
+  return 0;
+}
+
 char*
 gets(char *buf, int max)
 {
