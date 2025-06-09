@@ -169,7 +169,7 @@ syscall(void)
 
     // print the syscall if tracing is enabled
     if (p->trace & (1 << num)) {
-      printf("%d: syscall %s -> %lu\n", p->pid, syscall_names[num], p->trapframe->a0);
+      printf("%d: syscall %s -> %d\n", p->pid, syscall_names[num], (int)p->trapframe->a0);
     }
 
   } else {
