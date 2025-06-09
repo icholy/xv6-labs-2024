@@ -7,8 +7,8 @@ int main(int argc, char *argv[]) {
   for (;;) {
     char *end = sbrk(PGSIZE);
     for (int off = 0; off < PGSIZE - 40; off++) {
-      if (memcmp(end + off, "secret pw is:", 12) == 0) {
-        fprintf(2, "%s", end + off + 14);
+      if (memcmp(end + off, "very very secret pw is:", 22) == 0) {
+        fprintf(2, "%s", end + off + 24);
         exit(0);
       }
     }
