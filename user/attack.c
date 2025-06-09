@@ -4,12 +4,14 @@
 #include "kernel/riscv.h"
 
 int main(int argc, char *argv[]) {
-  for (;;) {
-    char *end = sbrk(PGSIZE);
-    char *match = strstr(end, "my very very very secret pw is:");
-    if (match) {
-      fprintf(2, "OK: secret is %s", match+32);
-      break;
+  const int sz = PGSIZE * 100;
+  char *end = sbrk(sz);
+  char *p;
+
+  for (p = end; p < end+sz ; p++) {
+    if (strcmp(p, "my very very very secret pw is:") == 0) {
+      fprintf(2, "OK: secret is %s", p+32);
+      exit(0);
     }
   }
   exit(0);
