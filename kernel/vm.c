@@ -488,6 +488,12 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
 void
 vmprint(pagetable_t pagetable) {
   printf("page table %p\n", pagetable);
+  for (int l2 = 0; l2 < 512; l2++) {
+    pte_t pte = pagetable[l2];
+    if (pte & PTE_V) {
+      printf("..0x%lx: pte 0x%lx pa ?\n", (uint64)((l2&PXMASK) >> 25), (uint64)pte);
+    }
+  }
 }
 #endif
 
