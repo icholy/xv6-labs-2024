@@ -485,10 +485,10 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
 
 #ifdef LAB_PGTBL
 void
-vmprint(pagetable_t pagetable) {
-  printf("page table %p\n", pagetable);
+vmprint(pagetable_t pagetable2) {
+  printf("page table %p\n", pagetable2);
   for (int l2 = 0; l2 < 512; l2++) {
-    pte_t pte2 = pagetable[l2];
+    pte_t pte2 = pagetable2[l2];
     if ((pte2 & PTE_V) == 0) {
       continue;
     }
@@ -496,6 +496,28 @@ vmprint(pagetable_t pagetable) {
       (void *)(uint64)((l2 & PXMASK) << PXSHIFT(2)),
       (void *)(uint64)pte2,
       (void *)PTE2PA(pte2));
+    pagetable_t pagetable1 = (pagetable_t)PTE2PA(pte2);
+    for (int l1 = 0; l1 < 512; l1++) {
+      pte_t pte1 = pagetable1[l1];
+      if ((pte1 & PTE_V) == 0) {
+        continue;
+      }
+      printf(".. ..%p: pte %p pa %p\n",
+        (void *)(uint64)(((l2 & PXMASK) << PXSHIFT(2)) | (l1 & PXMASK) << PXSHIFT(1)),
+        (void *)(uint64)pte1,
+        (void *)PTE2PA(pte1));
+      pagetable_t pagetable0 = (pagetable_t)PTE2PA(pte1);
+      for (int l0 = 0; l0 < 512; l0++) {
+        pte_t pte0 = pagetable0[l0];
+        if ((pte0 & PTE_V) == 0) {
+          continue;
+        }
+        printf(".. .. ..%p: pte %p pa %p\n",
+          (void *)(uint64)(((l2 & PXMASK) << PXSHIFT(2)) | (l1 & PXMASK) << PXSHIFT(1) | (l0 & PXMASK) << PXSHIFT(0)),
+          (void *)(uint64)pte0,
+          (void *)PTE2PA(pte0));
+      }
+    }
   }
 }
 #endif
