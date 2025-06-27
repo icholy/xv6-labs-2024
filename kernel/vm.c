@@ -483,7 +483,6 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
   }
 }
 
-
 #ifdef LAB_PGTBL
 void
 vmprint(pagetable_t pagetable) {
@@ -491,7 +490,9 @@ vmprint(pagetable_t pagetable) {
   for (int l2 = 0; l2 < 512; l2++) {
     pte_t pte = pagetable[l2];
     if (pte & PTE_V) {
-      printf("..0x%lx: pte 0x%lx pa ?\n", (uint64)((l2&PXMASK) >> 25), (uint64)pte);
+      printf("..%p: pte %p pa ?\n",
+        (void *)(uint64)((l2 & PXMASK) << PXSHIFT(2)),
+        (void *)(uint64)pte);
     }
   }
 }
