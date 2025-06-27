@@ -489,15 +489,8 @@ vmprint_level(pagetable_t pagetable, int level, uint64 va_prefix)  {
   for (int i = 0; i < 512; i++) {
     pte_t pte = pagetable[i];
     if (PTE_V & pte) {
-      switch (level) {
-        case 2:
-          printf(" ..");
-          break;
-        case 1:
-          printf(" .. ..");
-          break;
-        case 0:
-          printf(" .. .. ..");
+      for (int prefix = 0; prefix < 3 - level; prefix++) {
+        printf(" ..");
       }
       uint64 va = va_prefix | ((uint64)i << PXSHIFT(level));
       pagetable_t child = (pagetable_t)PTE2PA(pte);
