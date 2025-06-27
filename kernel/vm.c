@@ -484,48 +484,39 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
 }
 
 #ifdef LAB_PGTBL
-uint64
-va_from_idx(int l2, int l1, int l0)
-{
-  return ((uint64)l2 << PXSHIFT(2)) |
-         ((uint64)l1 << PXSHIFT(1)) |
-         ((uint64)l0 << PXSHIFT(0));
-}
 void
-vmprint(pagetable_t pagetable2) {
-  printf("page table %p\n", pagetable2);
-  for (int l2 = 0; l2 < 512; l2++) {
-    pte_t pte2 = pagetable2[l2];
-    if ((pte2 & PTE_V) == 0) {
-      continue;
-    }
-    printf("..%p: pte %p pa %p\n",
-      (void *)va_from_idx(l2, 0, 0),
-      (void *)(uint64)pte2,
-      (void *)PTE2PA(pte2));
-    pagetable_t pagetable1 = (pagetable_t)PTE2PA(pte2);
-    for (int l1 = 0; l1 < 512; l1++) {
-      pte_t pte1 = pagetable1[l1];
-      if ((pte1 & PTE_V) == 0) {
+vmprint_level(pagetable_t pagetable, int level, uint64 va_prefix)  {
+  for (int i = 0; i < 512; i++) {
+    pte_t pte = pagetable[i];
+    if (PTE_V & pte) {
+      switch (level) {
+        case 2:
+          printf(" ..");
+          break;
+        case 1:
+          printf(" .. ..");
+          break;
+        case 0:
+          printf(" .. .. ..");
+      }
+      uint64 va = va_prefix | ((uint64)i << PXSHIFT(level));
+      pagetable_t child = (pagetable_t)PTE2PA(pte);
+      printf("%p: pte %p pa %p\n",
+        (void *)va,
+        (void *)pte,
+        (void *)child);
+      if (level == 0) {
         continue;
       }
-      printf(".. ..%p: pte %p pa %p\n",
-        (void *)va_from_idx(l2, l1, 0),
-        (void *)(uint64)pte1,
-        (void *)PTE2PA(pte1));
-      pagetable_t pagetable0 = (pagetable_t)PTE2PA(pte1);
-      for (int l0 = 0; l0 < 512; l0++) {
-        pte_t pte0 = pagetable0[l0];
-        if ((pte0 & PTE_V) == 0) {
-          continue;
-        }
-        printf(".. .. ..%p: pte %p pa %p\n",
-          (void *)va_from_idx(l2, l1, l0),
-          (void *)(uint64)pte0,
-          (void *)PTE2PA(pte0));
-      }
+      vmprint_level(child, level - 1, va);
     }
   }
+}
+
+void
+vmprint(pagetable_t pagetable) {
+  printf("page table %p\n", pagetable);
+  vmprint_level(pagetable, 2, 0);
 }
 #endif
 
