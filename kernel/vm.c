@@ -488,11 +488,12 @@ void
 vmprint(pagetable_t pagetable) {
   printf("page table %p\n", pagetable);
   for (int l2 = 0; l2 < 512; l2++) {
-    pte_t pte = pagetable[l2];
-    if (pte & PTE_V) {
-      printf("..%p: pte %p pa ?\n",
+    pte_t pte2 = pagetable[l2];
+    if (pte2 & PTE_V) {
+      printf("..%p: pte %p pa %p\n",
         (void *)(uint64)((l2 & PXMASK) << PXSHIFT(2)),
-        (void *)(uint64)pte);
+        (void *)(uint64)pte2,
+        (void *)PTE2PA(pte2));
     }
   }
 }
