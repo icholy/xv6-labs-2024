@@ -309,6 +309,10 @@ uvmalloc(pagetable_t pagetable, uint64 oldsz, uint64 newsz, int xperm)
     if (SUPERPGROUNDUP(a) == a && newsz - a >= SUPERPGSIZE) {
       sz = SUPERPGSIZE;
       mem = skalloc();
+      if (mem == 0) {
+        mem = kalloc();
+        sz = PGSIZE;
+      }
     } else {
       mem = kalloc();
     }
