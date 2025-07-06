@@ -64,6 +64,8 @@
 #define TRAPFRAME (TRAMPOLINE - PGSIZE)
 #define USYSCALL (TRAPFRAME - PGSIZE)
 
+#ifdef LAB_PGTBL
 struct usyscall {
   int pid;  // Process ID
 };
+#endif
