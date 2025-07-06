@@ -1,0 +1,1 @@
+I can't think of any other system calls that could be sped up this way :(
