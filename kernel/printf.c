@@ -182,12 +182,10 @@ backtrace()
 {
   uint64 fp, ra;
   fp = r_s0();
-  while (1) {
-    ra = *(uint64 *)(fp - 8);
+  ra = r_ra();
+  while (ra != 0xe) {
     printf("%p\n", (void *)(ra));
-    if (ra == 0xe) {
-      break;
-    }
     fp = *(uint64 *)(fp - 16);
+    ra = *(uint64 *)(fp - 8);
   }
 } 
