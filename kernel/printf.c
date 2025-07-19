@@ -184,7 +184,7 @@ backtrace()
   fp = r_s0();
   ra = r_ra();
   printf("backtrace:\n");
-  while (ra != 0xe) {
+  while (PGROUNDDOWN(fp) != fp) {
     printf("%p\n", (void *)(ra));
     fp = *(uint64 *)(fp - 16);
     ra = *(uint64 *)(fp - 8);
