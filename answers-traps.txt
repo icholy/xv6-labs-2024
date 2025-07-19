@@ -1,2 +1,3 @@
 Arguments are passed in a0-a7 & fa0-fa7. The value 13 is passed in a2.
 The whole thing was inlined and then the constant expression was simplified down to the 13 constant at address 0x4635.
+The `printf` function is located at 0x6bc.
