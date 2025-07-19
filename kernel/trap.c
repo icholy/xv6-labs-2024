@@ -77,8 +77,23 @@ usertrap(void)
     exit(-1);
 
   // give up the CPU if this is a timer interrupt.
-  if(which_dev == 2)
+  if(which_dev == 2) {
+
+    // invoke pending alarm
+    if (p->alarm_interval != 0) {
+      p->alarm_ticks++;
+      if (p->alarm_ticks >= p->alarm_interval) {
+        p->alarm_ticks = 0;
+
+
+        // this will make it return to the handler instead of
+        // the place it was interupted from
+        p->trapframe->epc = p->alarm_handler;
+      }
+    }
+
     yield();
+  }
 
   usertrapret();
 }

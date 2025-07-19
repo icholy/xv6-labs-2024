@@ -97,17 +97,10 @@ sys_uptime(void)
 uint64
 sys_sigalarm(void)
 {
-  int interval;
-  uint64 handler;
-
-  argint(0, &interval);
-  argaddr(1, &handler);
-
-  // this is a total hack
   struct proc *p = myproc();
-  p->trapframe->epc = handler;
-
-  // TODO
+  p->alarm_ticks = 0;
+  argint(0, &p->alarm_interval);
+  argaddr(1, &p->alarm_handler);
   return 0;
 }
 
