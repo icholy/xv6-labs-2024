@@ -103,6 +103,10 @@ sys_sigalarm(void)
   argint(0, &interval);
   argaddr(1, &handler);
 
+  // this is a total hack
+  struct proc *p = myproc();
+  p->trapframe->epc = handler;
+
   // TODO
   return 0;
 }
