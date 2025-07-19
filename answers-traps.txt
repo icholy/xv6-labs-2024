@@ -3,3 +3,4 @@ The whole thing was inlined and then the constant expression was simplified down
 The `printf` function is located at 0x6bc.
 The `ra` contains the value 0x46 before calling `printf`.
 It outputs "HE110 World". If we were on a big-endian system, i would need to be `0x726c64`
+It's using whatever value happened to be in a2.
