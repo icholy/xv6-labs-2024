@@ -186,7 +186,7 @@ backtrace()
   bp = r_s0();
   ra = r_ra();
 
-  for (i = 0; i < 2; i++) {
+  for (i = 0; ra != 0; i++) {
     printf("%p\n", (void *)ra);
 
     ra = *(uint64*)(bp);
