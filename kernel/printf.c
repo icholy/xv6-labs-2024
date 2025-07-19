@@ -180,9 +180,17 @@ printfinit(void)
 void
 backtrace()
 {
-  uint64 ra = r_ra();
-  printf("ra=%p\n", (void *)ra);
+  uint64 bp, ra;
+  int i;
 
-  uint64 s0 = r_s0();
-  printf("s0=%p\n", (void *)s0);
+  bp = r_s0();
+  ra = r_ra();
+
+  for (i = 0; i < 2; i++) {
+    printf("%p\n", (void *)ra);
+
+    ra = *(uint64*)(bp);
+    bp = *(uint64*)(bp + 8);
+  }
+
 } 
