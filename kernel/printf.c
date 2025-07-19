@@ -181,5 +181,5 @@ void
 backtrace()
 {
   uint64 ra = r_ra();
-  printf("%lx\n", ra);
+  printf("%p\n", (void *)ra);
 } 
