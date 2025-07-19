@@ -176,3 +176,10 @@ printfinit(void)
   initlock(&pr.lock, "pr");
   pr.locking = 1;
 }
+
+void
+backtrace()
+{
+  uint64 ra = r_ra();
+  printf("%lx\n", ra);
+} 
