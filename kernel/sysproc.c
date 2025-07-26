@@ -113,5 +113,5 @@ sys_sigreturn(void)
   *p->trapframe = *p->alarm_trapframe;
   p->alarm_pending = 0;
   release(&p->lock);
-  return 0;
+  return p->trapframe->a0;
 }
