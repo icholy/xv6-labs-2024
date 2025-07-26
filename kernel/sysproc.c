@@ -107,6 +107,10 @@ sys_sigalarm(void)
 uint64
 sys_sigreturn(void)
 {
-  // TODO
+  // restore the trapframe
+  struct proc *p = myproc();
+  acquire(&p->lock);
+  *p->trapframe = *p->alarm_trapframe;
+  release(&p->lock);
   return 0;
 }
