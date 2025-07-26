@@ -150,6 +150,7 @@ found:
   p->alarm_handler = 0;
   p->alarm_interval = 0;
   p->alarm_ticks = 0;
+  p->alarm_pending = 0;
   if ((p->alarm_trapframe = (struct trapframe *)kalloc()) == 0){
     freeproc(p);
     release(&p->lock);

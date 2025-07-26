@@ -111,6 +111,7 @@ sys_sigreturn(void)
   struct proc *p = myproc();
   acquire(&p->lock);
   *p->trapframe = *p->alarm_trapframe;
+  p->alarm_pending = 0;
   release(&p->lock);
   return 0;
 }

@@ -106,6 +106,7 @@ struct proc {
   char name[16];               // Process name (debugging)
   int alarm_interval;          // How often to invoke the alarm handler (in ticks)
   int alarm_ticks;             // The number of ticks elapsed since the last invocation.
+  int alarm_pending;           // Set to 1 if the alarm handler is currently running.
   uint64 alarm_handler;        // The alarm handler 
   struct trapframe *alarm_trapframe;
 };

@@ -80,10 +80,13 @@ usertrap(void)
   if(which_dev == 2) {
 
     // invoke pending alarm
-    if (p->alarm_interval != 0) {
+    if (p->alarm_interval != 0 && !p->alarm_pending) {
       p->alarm_ticks++;
       if (p->alarm_ticks >= p->alarm_interval) {
         p->alarm_ticks = 0;
+
+        // we're not going to start another alarm until this is cleared.
+        p->alarm_pending = 1;
 
         // save the original trapframe
         *p->alarm_trapframe = *p->trapframe;
