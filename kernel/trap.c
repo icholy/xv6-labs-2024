@@ -85,6 +85,8 @@ usertrap(void)
       if (p->alarm_ticks >= p->alarm_interval) {
         p->alarm_ticks = 0;
 
+        // save the original trapframe
+        *p->alarm_trapframe = *p->trapframe;
 
         // this will make it return to the handler instead of
         // the place it was interupted from
