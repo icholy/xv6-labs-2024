@@ -23,10 +23,13 @@ struct {
   struct run *freelist;
 } kmem;
 
+char krefs[NREFS];
+
 void
 kinit()
 {
   initlock(&kmem.lock, "kmem");
+  memset(krefs, 1, NREFS * sizeof(char));
   freerange(end, (void*)PHYSTOP);
 }
 
@@ -37,6 +40,33 @@ freerange(void *pa_start, void *pa_end)
   p = (char*)PGROUNDUP((uint64)pa_start);
   for(; p + PGSIZE <= (char*)pa_end; p += PGSIZE)
     kfree(p);
+}
+
+int krefs_idx(void *pa)
+{
+  int i = ((char*)pa - end) / PGSIZE;
+  if (i < 0 || i >= NREFS) {
+    panic("kref: out of bounds");
+  }
+  return i;
+}
+
+// add delta to the refernece counter for the page used
+// by PA and return the total.
+char
+krefadd(void *pa, char delta)
+{
+  int n, i;
+
+  if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
+    panic("krefadd");
+
+  acquire(&kmem.lock);
+  i = krefs_idx(pa);
+  krefs[i] += delta;
+  n = krefs[i];
+  release(&kmem.lock);
+  return n;
 }
 
 // Free the page of physical memory pointed at by pa,
@@ -50,6 +80,17 @@ kfree(void *pa)
 
   if(((uint64)pa % PGSIZE) != 0 || (char*)pa < end || (uint64)pa >= PHYSTOP)
     panic("kfree");
+
+  int i = krefs_idx(pa);
+  acquire(&kmem.lock);
+  if (krefs[i] <= 0)
+    panic("kfree: doublefree");
+  krefs[i]--;
+  if (krefs[i] > 0) {
+    release(&kmem.lock);
+    return;
+  }
+  release(&kmem.lock);
 
   // Fill with junk to catch dangling refs.
   memset(pa, 1, PGSIZE);
@@ -76,7 +117,17 @@ kalloc(void)
     kmem.freelist = r->next;
   release(&kmem.lock);
 
-  if(r)
+  if(r) {
+
     memset((char*)r, 5, PGSIZE); // fill with junk
+  
+    int i = krefs_idx((void *)r);
+    acquire(&kmem.lock);
+    if (krefs[i] != 0)
+      panic("kalloc: non-zero ref");
+    krefs[i] = 1;
+    release(&kmem.lock);
+  }
+  
   return (void*)r;
 }

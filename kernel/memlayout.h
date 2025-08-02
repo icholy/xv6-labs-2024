@@ -39,6 +39,9 @@
 #define KERNBASE 0x80000000L
 #define PHYSTOP (KERNBASE + 128*1024*1024)
 
+// max number of page reference counters
+#define NREFS (PHYSTOP-KERNBASE) / PGSIZE
+
 // map the trampoline page to the highest address,
 // in both user and kernel space.
 #define TRAMPOLINE (MAXVA - PGSIZE)
